@@ -1,0 +1,172 @@
+/* LoanApplication.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+.loan-application-container {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  font-family: 'Poppins', sans-serif;
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+/* Custom glass effect for cards */
+.custom-glass {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Text gradient effect */
+.text-gradient {
+  background: linear-gradient(90deg, #818cf8 0%, #c084fc 50%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Custom button styles */
+.custom-btn {
+  background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+}
+
+.custom-btn:hover, .custom-btn:focus {
+  background: linear-gradient(90deg, #818cf8 0%, #a78bfa 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* Custom dropdown for Ant Design */
+.custom-dropdown {
+  background: #1e293b;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-dropdown .ant-select-item {
+  color: #e2e8f0;
+}
+
+.custom-dropdown .ant-select-item-option-selected {
+  background: rgba(99, 102, 241, 0.2);
+}
+
+/* Form input focus effects */
+.loan-form .ant-input:focus,
+.loan-form .ant-input-focused,
+.loan-form .ant-input-number:focus,
+.loan-form .ant-input-number-focused,
+.loan-form .ant-select:focus .ant-select-selector,
+.loan-form .ant-select-focused .ant-select-selector {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  outline: 0;
+}
+
+/* 3D orbs animation */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: 0;
+}
+
+.orb-1 {
+  width: 300px;
+  height: 300px;
+  background: rgba(99, 102, 241, 0.4);
+  top: 10%;
+  left: 5%;
+  animation: float 15s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: rgba(139, 92, 246, 0.3);
+  bottom: 5%;
+  right: 10%;
+  animation: float 18s ease-in-out infinite reverse;
+}
+
+.orb-3 {
+  width: 250px;
+  height: 250px;
+  background: rgba(96, 165, 250, 0.3);
+  top: 50%;
+  left: 70%;
+  animation: float 12s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+/* Card hover effects */
+.form-card, .summary-card {
+  transition: transform 0.5s ease, box-shadow 0.5s ease;
+}
+
+.form-card:hover, .summary-card:hover {
+  transform: translateY(-5px) perspective(1000px) rotateX(2deg);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+}
+
+/* Success message animation */
+.ant-alert-success {
+  animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Typewriter effect for title */
+.text-gradient::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loan-application-container .container {
+    padding: 1rem;
+  }
+  
+  .orb {
+    display: none;
+  }
+}

@@ -1,0 +1,215 @@
+/* src/components/common/Footer.css */
+.home-footer {
+  background: linear-gradient(135deg, #0a0a1a 0%, #0f0f23 100%);
+  border-top: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 4rem 0 2rem;
+  margin-top: auto;
+  position: relative;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.footer-description {
+  color: #a0a0c0;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.footer-heading {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+  color: #a0a0c0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #6366f1;
+}
+
+.footer-social {
+  margin-top: auto;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a0a0c0;
+}
+
+/* 3D Logo Styles */
+.logo-3d {
+  perspective: 800px;
+  width: 40px;
+  height: 40px;
+}
+
+.logo-3d.small {
+  width: 40px;
+  height: 40px;
+}
+
+.logo-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: float 6s ease-in-out infinite;
+}
+
+.logo-front, .logo-side {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  backface-visibility: hidden;
+  border-radius: 4px;
+}
+
+.logo-front {
+  transform: translateZ(20px);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+.logo-back {
+  transform: rotateY(180deg) translateZ(20px);
+}
+
+.logo-right {
+  transform: rotateY(90deg) translateZ(20px);
+  width: 40px;
+}
+
+.logo-left {
+  transform: rotateY(-90deg) translateZ(20px);
+  width: 40px;
+}
+
+.logo-top {
+  transform: rotateX(90deg) translateZ(20px);
+  height: 40px;
+}
+
+.logo-bottom {
+  transform: rotateX(-90deg) translateZ(20px);
+  height: 40px;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate3d(0.5, 1, 0, 0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate3d(0.5, 1, 0, 10deg);
+  }
+}
+
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Type animation for text if needed */
+.typewriter {
+  overflow: hidden;
+  border-right: 0.15em solid #6366f1;
+  white-space: nowrap;
+  animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #6366f1 }
+}
+
+/* Ensure proper layout for pages using the footer */
+.min-h-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.min-h-screen > main {
+  flex: 1;
+}
+
+/* Make sure the footer works in the auth layout */
+div > footer {
+  margin-top: auto;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .footer-section {
+    text-align: center;
+    align-items: center;
+  }
+  
+  .logo-3d {
+    margin: 0 auto;
+  }
+}
