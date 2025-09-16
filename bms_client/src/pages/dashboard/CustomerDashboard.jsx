@@ -459,7 +459,7 @@ const CustomerDashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 p-4 md:p-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full mx-auto">
           <Skeleton active paragraph={{ rows: 10 }} />
         </div>
       </div>
@@ -480,7 +480,7 @@ const CustomerDashboard = () => {
       <div className="absolute top-2/3 left-1/2 w-80 h-80 rounded-full bg-indigo-600/10 blur-3xl animate-pulse-fast"></div>
       <div className="absolute top-1/3 right-1/3 w-72 h-72 rounded-full bg-pink-500/10 blur-3xl animate-pulse-slower"></div>
       
-      <div className="relative z-10 p-4 md:p-6 mx-auto max-w-7xl">
+      <div className="relative z-10 p-4 md:p-6 w-full">
         {/* Header Section */}
         <div className="mb-8 transform transition-all duration-700 hover:scale-[1.01]">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-6 bg-gradient-to-r from-indigo-900/30 via-purple-900/30 to-cyan-900/30 rounded-2xl backdrop-blur-xl border border-indigo-500/30 shadow-2xl relative overflow-hidden">
@@ -965,9 +965,9 @@ const CustomerDashboard = () => {
                               
                               {loans.length > 3 && (
                                 <div className="text-center pt-2">
-                                  <Text type="secondary" className="text-gray-400">
-                                    +{loans.length - 3} more loans
-                                  </Text>
+                                    <Text type="secondary" className="text-gray-400">
+                                      +{loans.length - 3} more loans
+                                    </Text>
                                 </div>
                               )}
                             </div>
