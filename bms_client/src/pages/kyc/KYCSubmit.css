@@ -1,197 +1,121 @@
 /* src/pages/kyc/KYCSubmit.css */
-
-/* 3D Background Animation with Particles */
 .kyc-submit-container {
   min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-  perspective: 1000px;
+  padding: 20px;
 }
 
 .kyc-background-animation {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0.7;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  animation: float 6s ease-in-out infinite;
 }
 
-.kyc-background-animation::before {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 25%);
-  animation: pulse 15s ease-in-out infinite;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
 }
 
-.kyc-background-animation::after {
-  content: '';
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  top: -50%;
-  left: -50%;
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.01) 0%, transparent 50%, rgba(255, 255, 255, 0.01) 100%);
-  transform: rotate(30deg);
-  animation: shine 20s infinite linear;
-}
-
-/* 3D Particles */
 .particles-3d {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
 }
 
 .particle {
   position: absolute;
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 50%;
-  background: rgba(139, 92, 246, 0.3);
-  animation: float 15s infinite ease-in-out;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  animation: particleFloat 15s infinite linear;
 }
 
 .particle:nth-child(1) {
-  width: 20px;
-  height: 20px;
+  width: 6px;
+  height: 6px;
   top: 20%;
   left: 10%;
-  animation-delay: 0s;
-  animation-duration: 25s;
-}
-
-.particle:nth-child(2) {
-  width: 15px;
-  height: 15px;
-  top: 60%;
-  left: 80%;
-  animation-delay: 2s;
   animation-duration: 20s;
 }
 
+.particle:nth-child(2) {
+  width: 8px;
+  height: 8px;
+  top: 60%;
+  left: 80%;
+  animation-duration: 25s;
+}
+
 .particle:nth-child(3) {
-  width: 25px;
-  height: 25px;
-  top: 80%;
-  left: 30%;
-  animation-delay: 4s;
-  animation-duration: 30s;
+  width: 4px;
+  height: 4px;
+  top: 40%;
+  left: 50%;
+  animation-duration: 18s;
 }
 
 .particle:nth-child(4) {
   width: 10px;
   height: 10px;
-  top: 40%;
-  left: 50%;
-  animation-delay: 6s;
-  animation-duration: 18s;
-}
-
-.particle:nth-child(5) {
-  width: 18px;
-  height: 18px;
-  top: 10%;
-  left: 70%;
-  animation-delay: 8s;
+  top: 80%;
+  left: 30%;
   animation-duration: 22s;
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0) translateX(0) rotate(0deg);
-    opacity: 0.7;
-  }
-  25% {
-    transform: translateY(-50px) translateX(40px) rotate(90deg);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translateY(30px) translateX(-30px) rotate(180deg);
-    opacity: 0.5;
-  }
-  75% {
-    transform: translateY(-30px) translateX(-40px) rotate(270deg);
-    opacity: 0.8;
-  }
+.particle:nth-child(5) {
+  width: 5px;
+  height: 5px;
+  top: 30%;
+  left: 70%;
+  animation-duration: 17s;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 0.9;
-  }
-}
-
-@keyframes shine {
+@keyframes particleFloat {
   0% {
-    transform: translateX(-100%) rotate(30deg);
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
   }
   100% {
-    transform: translateX(100%) rotate(30deg);
+    transform: translateY(-100vh) rotate(720deg);
+    opacity: 0;
   }
 }
 
-/* Content Styling */
 .kyc-content-wrapper {
-  position: relative;
-  z-index: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .kyc-form-card {
   width: 100%;
-  max-width: 650px;
-  background: rgba(26, 26, 46, 0.85);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  max-width: 800px;
   border-radius: 20px;
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(139, 92, 246, 0.1),
-    0 0 30px rgba(139, 92, 246, 0.2) inset;
-  padding: 2.5rem;
-  animation: cardAppear 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 30px;
   transform-style: preserve-3d;
-  transition: all 0.5s ease;
-}
-
-.kyc-form-card:hover {
-  box-shadow: 
-    0 25px 50px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(139, 92, 246, 0.2),
-    0 0 40px rgba(139, 92, 246, 0.3) inset;
-  transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
-}
-
-@keyframes cardAppear {
-  0% {
-    opacity: 0;
-    transform: translateY(30px) scale(0.95) rotateX(10deg);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1) rotateX(0);
-  }
+  perspective: 1000px;
 }
 
 .kyc-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 30px;
   position: relative;
 }
 
@@ -199,318 +123,135 @@
   position: absolute;
   left: 0;
   top: 0;
-  color: #8a8aa3;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 8px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.back-button:hover {
-  color: #fff;
-  background: rgba(139, 92, 246, 0.2);
-  border-color: rgba(139, 92, 246, 0.5);
-  transform: translateX(-5px);
+  color: #666;
 }
 
 .kyc-title {
-  color: #fff !important;
-  margin-bottom: 0.5rem !important;
-  font-weight: 800;
-  background: linear-gradient(90deg, #ff7eee, #8b5cf6, #6366f1);
+  color: #2d3748;
+  margin-bottom: 8px !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
-  animation: titleGlow 3s infinite alternate;
-}
-
-@keyframes titleGlow {
-  0% {
-    text-shadow: 0 5px 15px rgba(139, 92, 246, 0.4);
-  }
-  100% {
-    text-shadow: 0 5px 25px rgba(139, 92, 246, 0.7), 0 0 30px rgba(139, 92, 246, 0.5);
-  }
 }
 
 .kyc-subtitle {
-  color: #8a8aa3;
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
-  animation: fadeIn 1s ease-out;
-}
-
-.kyc-alert {
-  margin-bottom: 1.5rem;
-  border-radius: 12px;
-  border: none;
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(10px);
-  animation: slideIn 0.5s ease-out;
-}
-
-@keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.kyc-form {
-  margin-top: 1.5rem;
-}
-
-.kyc-form .ant-form-item {
-  margin-bottom: 1.5rem;
-  animation: formItemAppear 0.6s ease-out;
-  animation-fill-mode: both;
-}
-
-.kyc-form .ant-form-item:nth-child(1) { animation-delay: 0.1s; }
-.kyc-form .ant-form-item:nth-child(2) { animation-delay: 0.2s; }
-.kyc-form .ant-form-item:nth-child(3) { animation-delay: 0.3s; }
-.kyc-form .ant-form-item:nth-child(4) { animation-delay: 0.4s; }
-.kyc-form .ant-form-item:nth-child(5) { animation-delay: 0.5s; }
-.kyc-form .ant-form-item:nth-child(6) { animation-delay: 0.6s; }
-
-@keyframes formItemAppear {
-  0% {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.kyc-form .ant-form-item-label > label {
-  color: #fff !important;
-  font-weight: 600;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.kyc-input, .kyc-select {
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 12px !important;
-  color: #fff !important;
-  transition: all 0.3s ease;
-  padding: 12px 16px;
-  font-size: 1rem;
-  height: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transform: translateZ(0);
-}
-
-.kyc-input:hover, .kyc-select:hover {
-  border-color: #8b5cf6 !important;
-  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.2);
-  transform: translateY(-2px) translateZ(0);
-}
-
-.kyc-input:focus, .kyc-select:focus, .kyc-input-focused, .kyc-select-focused {
-  border-color: #8b5cf6 !important;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25), 0 8px 16px rgba(139, 92, 246, 0.2) !important;
-  transform: translateY(-3px) translateZ(0);
-}
-
-.kyc-input::placeholder {
-  color: #8a8aa3 !important;
-  opacity: 0.7;
-}
-
-.kyc-select .ant-select-selector {
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 12px !important;
-  color: #fff !important;
-  padding: 10px 16px;
-  height: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.kyc-select .ant-select-selector:hover {
-  border-color: #8b5cf6 !important;
-  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.2);
-  transform: translateY(-2px);
-}
-
-.kyc-select .ant-select-arrow {
-  color: #8b5cf6;
+  color: #718096;
   font-size: 16px;
 }
 
-.kyc-select .ant-select-selection-item {
-  color: #fff;
-  font-size: 1rem;
-}
-
-.kyc-upload {
-  border: 2px dashed rgba(255, 255, 255, 0.15) !important;
+.kyc-alert {
+  margin-bottom: 24px;
   border-radius: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
 }
 
-.kyc-upload:hover {
-  border-color: #8b5cf6 !important;
-  background: rgba(139, 92, 246, 0.05);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.2);
+.kyc-form {
+  margin-top: 20px;
 }
 
-.kyc-upload .ant-upload.ant-upload-select {
-  width: 100%;
-  margin-bottom: 0.5rem;
+.form-section {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: rgba(247, 250, 252, 0.8);
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
 }
 
-.kyc-upload .ant-upload-list-item {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  color: #fff;
-  margin-top: 12px;
-  padding: 10px 16px;
-  transition: all 0.3s ease;
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.kyc-upload .ant-upload-list-item:hover {
-  background: rgba(139, 92, 246, 0.1);
-  border-color: rgba(139, 92, 246, 0.5);
-  transform: translateX(5px);
+.section-icon {
+  font-size: 20px;
+  color: #667eea;
+  margin-right: 12px;
 }
 
-.kyc-upload .ant-upload-list-item-name {
-  color: #fff;
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.kyc-upload .anticon-paper-clip {
-  color: #8b5cf6;
+.form-item {
+  margin-bottom: 0;
 }
 
-.kyc-upload .ant-btn {
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), rgba(109, 40, 217, 0.2));
-  border: 1px solid rgba(139, 92, 246, 0.5);
-  color: #fff;
-  transition: all 0.3s ease;
-  width: 100%;
-  border-radius: 10px;
-  padding: 12px 20px;
-  height: auto;
-  font-weight: 500;
-  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.2);
-}
-
-.kyc-upload .ant-btn:hover {
-  background: linear-gradient(90deg, rgba(139, 92, 246, 0.3), rgba(109, 40, 217, 0.3));
-  border-color: #8b5cf6;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
-}
-
-.kyc-submit-button {
-  background: linear-gradient(90deg, #8b5cf6, #6d28d9, #4c1d95) !important;
-  border: none !important;
-  border-radius: 12px !important;
-  height: 52px !important;
-  font-weight: 700 !important;
-  font-size: 1.1rem !important;
-  transition: all 0.4s ease !important;
-  margin-top: 1.5rem;
-  box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4);
-  position: relative;
-  overflow: hidden;
-}
-
-.kyc-submit-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: all 0.6s ease;
-}
-
-.kyc-submit-button:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(139, 92, 246, 0.5) !important;
-}
-
-.kyc-submit-button:hover::before {
-  left: 100%;
-}
-
-.kyc-submit-button:disabled {
-  opacity: 0.6;
-  transform: none !important;
-  box-shadow: none !important;
-}
-
-.kyc-footer {
-  text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeIn 0.8s ease-out;
-}
-
-.status-link {
-  color: #8b5cf6 !important;
+.form-item :global(.ant-form-item-label) {
   font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  padding: 8px 16px;
-  border-radius: 8px;
 }
 
-.status-link::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 0;
-  height: 2px;
-  background: #8b5cf6;
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-}
-
-.status-link:hover {
-  color: #fff !important;
-  background: rgba(139, 92, 246, 0.1);
-  transform: translateY(-3px);
-}
-
-.status-link:hover::after {
-  width: 80%;
-}
-
-/* Form focus animations */
-.kyc-form-item-focus {
-  transform: translateY(-5px);
+.form-item :global(.ant-input),
+.form-item :global(.ant-select-selector) {
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+  padding: 12px 16px;
   transition: all 0.3s ease;
 }
 
-/* Upload success animation */
+.form-item :global(.ant-input):focus,
+.form-item :global(.ant-select-selector):focus,
+.form-item :global(.ant-input):hover,
+.form-item :global(.ant-select-selector):hover {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-item.focused :global(.ant-input),
+.form-item.focused :global(.ant-select-selector) {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.upload-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.upload-group {
+  text-align: center;
+}
+
+.upload-group strong {
+  display: block;
+  margin-bottom: 12px;
+  color: #2d3748;
+}
+
+.kyc-upload :global(.ant-upload-select) {
+  width: 100% !important;
+  height: 120px !important;
+  border-radius: 12px !important;
+  border: 2px dashed #cbd5e0 !important;
+  background: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.kyc-upload :global(.ant-upload-select):hover {
+  border-color: #667eea !important;
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #a0aec0;
+}
+
+.upload-placeholder :global(.anticon) {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
 .upload-success {
-  animation: successPulse 0.6s ease;
+  animation: successPulse 0.6s ease-in-out;
 }
 
 @keyframes successPulse {
@@ -519,43 +260,61 @@
   100% { transform: scale(1); }
 }
 
-/* Responsive adjustments */
+.submit-item {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.submit-button {
+  height: 48px;
+  padding: 0 40px;
+  border-radius: 12px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+
+.kyc-footer {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.footer-text {
+  text-align: center;
+  margin: 0;
+  color: #718096;
+  font-size: 14px;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .kyc-content-wrapper {
-    padding: 1rem;
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .upload-row {
+    grid-template-columns: 1fr;
   }
   
   .kyc-form-card {
-    padding: 1.5rem;
-    border-radius: 16px;
+    margin: 10px;
+    padding: 20px;
   }
   
   .back-button {
     position: relative;
-    margin-bottom: 1rem;
-    left: 0;
-  }
-  
-  .kyc-title {
-    font-size: 1.8rem !important;
-  }
-  
-  .kyc-input, .kyc-select {
-    padding: 10px 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .kyc-form-card {
-    padding: 1.2rem;
-  }
-  
-  .kyc-title {
-    font-size: 1.5rem !important;
-  }
-  
-  .kyc-submit-button {
-    height: 48px !important;
-    font-size: 1rem !important;
+    margin-bottom: 16px;
   }
 }

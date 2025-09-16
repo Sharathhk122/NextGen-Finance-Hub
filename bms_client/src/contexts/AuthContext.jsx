@@ -21,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     }
     
     try {
-      const response = await fetch('http://localhost:8080/api/auth/validate', {
+      const response = await fetch('https://backend-hk.onrender.com/api/auth/validate', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await fetch('https://backend-hk.onrender.com/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerCustomer = async (userData) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register/customer', {
+      const response = await fetch('https://backend-hk.onrender.com/api/auth/register/customer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
 
   const registerAdmin = async (userData) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register/admin', {
+      const response = await fetch('https://backend-hk.onrender.com/api/auth/register/admin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyEmail = async (email, otp) => {
     try {
-      const response = await fetch('http://localhost:8080/api/auth/verify-email', {
+      const response = await fetch('https://backend-hk.onrender.com/api/auth/verify-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ export const AuthProvider = ({ children }) => {
 
   const resendOTP = async (email) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/auth/resend-otp?email=${encodeURIComponent(email)}`, {
+      const response = await fetch(`https://backend-hk.onrender.com/api/auth/resend-otp?email=${encodeURIComponent(email)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

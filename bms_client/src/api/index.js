@@ -1,13 +1,15 @@
 // src/api/index.js
 import axios from 'axios';
 
-// Create axios instance with default config
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-hk.onrender.com/api';
+
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api',
-  timeout: 10000,
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// Request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -16,17 +18,13 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle common errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -35,12 +33,46 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export const userAPI = {
+  login: (credentials) => api.post('/auth/login', credentials),
+  register: (userData) => api.post('/auth/register', userData),
+  getProfile: () => api.get('/users/profile'),
+  updateProfile: (userData) => api.put('/users/profile', userData),
+  getAllUsers: () => api.get('/admin/users'),
+  updateUser: (userId, userData) => api.put(`/admin/users/${userId}`, userData),
+  deleteUser: (userId) => api.delete(`/admin/users/${userId}`),
+};
 
-// Export all API modules
-export * from './auth';
-export * from './account';
-export * from './loan';
-export * from './transaction';
-export * from './kyc';
-export * from './user';
+export const kycAPI = {
+  submitKYC: (kycData) => api.post('/kyc', kycData),
+  getKYCStatus: () => api.get('/kyc/status'),
+  getAllKYCSubmissions: () => api.get('/admin/kyc'),
+  approveKYC: (kycId) => api.put(`/admin/kyc/${kycId}/approve`),
+  rejectKYC: (kycId, data) => api.put(`/admin/kyc/${kycId}/reject`, data),
+};
+
+export const accountAPI = {
+  getAccountDetails: () => api.get('/accounts'),
+  createAccount: (accountData) => api.post('/accounts', accountData),
+  getTransactions: (params) => api.get('/accounts/transactions', { params }),
+  transferFunds: (transferData) => api.post('/accounts/transfer', transferData),
+  getUserAccounts: () => api.get('/accounts/user'),
+};
+
+export const loanAPI = {
+  // Loan application and management
+  applyForLoan: (loanData) => api.post('/loans', loanData),
+  getUserLoans: () => api.get('/loans'),
+  getLoanDetails: (loanId) => api.get(`/loans/${loanId}`),
+  getEMISchedule: (loanId) => api.get(`/loans/${loanId}/emi-schedule`),
+  payEMI: (loanId, data) => api.post(`/loans/${loanId}/pay-emi`, data),
+  
+  // Admin loan management
+  getPendingLoans: () => api.get('/admin/loans/pending'),
+  approveLoan: (loanId) => api.put(`/admin/loans/${loanId}/approve`),
+  disburseLoan: (loanId) => api.post(`/admin/loans/${loanId}/disburse`),
+  rejectLoan: (loanId, reason) => api.put(`/admin/loans/${loanId}/reject`, { reason }),
+  getAllLoans: (params) => api.get('/admin/loans', { params }),
+};
+
+export default api;

@@ -1,94 +1,77 @@
 // src/api/mockKYC.js
-// Mock data for KYC when backend endpoints are not available
+// Mock API for development when backend is not available
 export const mockKYCAPI = {
-  getAllKYCSubmissions: () => {
-    return Promise.resolve({
-      data: [
-        {
-          id: 1,
-          status: "PENDING",
-          documentNumber: "123456789012",
-          documentType: "AADHAAR",
-          documentFrontImageUrl: "/uploads/front.jpg",
-          documentBackImageUrl: "/uploads/back.jpg",
-          selfieImageUrl: "/uploads/selfie.jpg",
-          submittedAt: "2025-08-20T22:41:30.413821",
-          verifiedAt: null,
-          verifiedBy: null,
-          rejectionReason: null,
-          user: {
-            id: 1,
-            firstName: "John",
-            lastName: "Doe",
-            email: "john.doe@example.com"
+  submitKYC: async (formData) => {
+    console.log('Mock KYC submission:', formData);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            id: 'mock-kyc-id',
+            status: 'PENDING',
+            submittedAt: new Date().toISOString(),
+            message: 'KYC submitted successfully (mock)'
           }
-        },
-        {
-          id: 2,
-          status: "APPROVED",
-          documentNumber: "ABCDE1234F",
-          documentType: "PAN",
-          documentFrontImageUrl: "/uploads/pan_front.jpg",
-          documentBackImageUrl: null,
-          selfieImageUrl: "/uploads/selfie2.jpg",
-          submittedAt: "2025-08-19T15:30:45.123456",
-          verifiedAt: "2025-08-20T10:15:30.789012",
-          verifiedBy: "admin@example.com",
-          rejectionReason: null,
-          user: {
-            id: 2,
-            firstName: "Jane",
-            lastName: "Smith",
-            email: "jane.smith@example.com"
-          }
-        },
-        {
-          id: 3,
-          status: "REJECTED",
-          documentNumber: "DL1234567890123",
-          documentType: "DRIVING_LICENSE",
-          documentFrontImageUrl: "/uploads/dl_front.jpg",
-          documentBackImageUrl: "/uploads/dl_back.jpg",
-          selfieImageUrl: "/uploads/selfie3.jpg",
-          submittedAt: "2025-08-18T09:12:34.567890",
-          verifiedAt: "2025-08-19T14:22:11.334455",
-          verifiedBy: "admin@example.com",
-          rejectionReason: "Document image is blurry and not readable",
-          user: {
-            id: 3,
-            firstName: "Bob",
-            lastName: "Johnson",
-            email: "bob.johnson@example.com"
-          }
-        }
-      ]
+        });
+      }, 1500);
     });
   },
 
-  updateKYCStatus: (kycId, statusData) => {
+  getKYCStatus: async () => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // Simulate 404 for no KYC found
+        const error = new Error('KYC not found');
+        error.response = { status: 404 };
+        reject(error);
+      }, 1000);
+    });
+  },
+
+  getAllKYCSubmissions: async () => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const mockResponse = {
-          id: kycId,
-          status: statusData.status,
-          documentNumber: "123456789012",
-          documentType: "AADHAAR",
-          documentFrontImageUrl: "/uploads/front.jpg",
-          documentBackImageUrl: "/uploads/back.jpg",
-          selfieImageUrl: "/uploads/selfie.jpg",
-          submittedAt: "2025-08-20T22:41:30.413821",
-          verifiedAt: statusData.status !== "PENDING" ? new Date().toISOString() : null,
-          verifiedBy: statusData.status !== "PENDING" ? "admin@example.com" : null,
-          rejectionReason: statusData.rejectionReason || null,
-          user: {
-            id: 1,
-            firstName: "John",
-            lastName: "Doe",
-            email: "john.doe@example.com"
+        resolve({
+          data: [
+            {
+              id: '1',
+              userId: 'user1',
+              documentType: 'PASSPORT',
+              documentNumber: 'A12345678',
+              status: 'APPROVED',
+              submittedAt: '2023-01-15T10:30:00Z',
+              verifiedAt: '2023-01-16T14:20:00Z',
+              verifiedBy: 'admin1'
+            },
+            {
+              id: '2',
+              userId: 'user2',
+              documentType: 'DRIVERS_LICENSE',
+              documentNumber: 'DL987654',
+              status: 'REJECTED',
+              submittedAt: '2023-01-16T11:45:00Z',
+              verifiedAt: '2023-01-17T09:15:00Z',
+              verifiedBy: 'admin2',
+              rejectionReason: 'Document image is blurry'
+            }
+          ]
+        });
+      }, 1000);
+    });
+  },
+
+  updateKYCStatus: async (kycId, statusData) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          data: {
+            id: kycId,
+            ...statusData,
+            verifiedAt: new Date().toISOString(),
+            verifiedBy: 'mock-admin'
           }
-        };
-        resolve({ data: mockResponse });
-      }, 1000); // Simulate network delay
+        });
+      }, 1000);
     });
   }
 };

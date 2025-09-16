@@ -423,7 +423,7 @@ const AdminKYCManagement = () => {
       } else if (imageData.startsWith('http')) {
         return <img src={imageData} alt={altText} className="w-full h-48 object-contain border border-gray-300 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl" />;
       } else {
-        return <img src={`http://localhost:8080${imageData}`} alt={altText} className="w-full h-48 object-contain border border-gray-300 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl" />;
+        return <img src={`https://backend-hk.onrender.com${imageData}`} alt={altText} className="w-full h-48 object-contain border border-gray-300 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl" />;
       }
     }
     
