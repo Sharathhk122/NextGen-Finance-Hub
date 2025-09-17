@@ -1,10 +1,6 @@
 // CustomerDashboard.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { accountAPI } from '../../api/account';
-import { kycAPI } from '../../api/kyc';
-import { loanAPI } from '../../api/loan';
-import { transactionAPI } from '../../api/transaction';
 import { useAuth } from '../../hooks/useAuth';
 import { 
   Card, 
@@ -94,7 +90,7 @@ const CustomerDashboard = () => {
   const threeDContainerRef = useRef(null);
 
   useEffect(() => {
-    fetchDashboardData();
+    generateRandomData();
     
     // Typewriter effect for header
     if (headerTextRef.current) {
@@ -120,6 +116,65 @@ const CustomerDashboard = () => {
       }
     };
   }, []);
+
+  // Generate random data instead of API calls
+  const generateRandomData = () => {
+    setLoading(true);
+    
+    // Generate random accounts
+    const accountTypes = ['Savings', 'Current', 'Fixed Deposit', 'Premium'];
+    const randomAccounts = Array.from({ length: 3 }, (_, i) => ({
+      id: `acc-${i + 1}`,
+      accountName: `${accountTypes[i % accountTypes.length]} Account`,
+      accountNumber: `XXXX XXXX XXXX ${1000 + i}`,
+      balance: Math.floor(Math.random() * 50000) + 5000,
+      status: 'ACTIVE'
+    }));
+    setAccounts(randomAccounts);
+    
+    // Generate random loans
+    const loanStatuses = ['DISBURSED', 'PENDING', 'CLOSED'];
+    const randomLoans = Array.from({ length: 2 }, (_, i) => ({
+      id: `loan-${i + 1}`,
+      productName: i === 0 ? 'Personal Loan' : 'Home Loan',
+      loanAmount: i === 0 ? 500000 : 2500000,
+      outstandingBalance: i === 0 ? 350000 : 1800000,
+      status: loanStatuses[i],
+      disbursementDate: new Date(Date.now() - (i * 90 * 24 * 60 * 60 * 1000)).toISOString()
+    }));
+    setLoans(randomLoans);
+    
+    // Set random KYC status
+    const kycStatuses = ['APPROVED', 'PENDING', 'REJECTED', 'NOT_SUBMITTED'];
+    setKycStatus({
+      status: kycStatuses[Math.floor(Math.random() * kycStatuses.length)],
+      rejectionReason: Math.random() > 0.5 ? 'Document quality insufficient' : ''
+    });
+    
+    // Generate random transactions
+    const transactionTypes = ['CREDIT', 'DEBIT'];
+    const transactionDescriptions = [
+      'Salary Credit', 
+      'Fund Transfer', 
+      'Utility Payment', 
+      'Online Shopping', 
+      'Investment Return'
+    ];
+    
+    const randomTransactions = Array.from({ length: 5 }, (_, i) => {
+      const type = transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
+      return {
+        id: `txn-${i + 1}`,
+        type,
+        amount: Math.floor(Math.random() * 20000) + 1000,
+        description: transactionDescriptions[i % transactionDescriptions.length],
+        timestamp: new Date(Date.now() - (i * 2 * 24 * 60 * 60 * 1000)).toISOString()
+      };
+    });
+    setRecentTransactions(randomTransactions);
+    
+    setLoading(false);
+  };
 
   const init3DBackground = () => {
     const canvas = canvasRef.current;
@@ -312,80 +367,6 @@ const CustomerDashboard = () => {
     
     // Start animation
     animate();
-  };
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [accountsResponse, loansResponse, kycResponse] = await Promise.all([
-        accountAPI.getUserAccounts(),
-        loanAPI.getUserLoans().catch(err => ({ data: [] })),
-        kycAPI.getKYCStatus().catch(err => ({ data: { status: 'NOT_SUBMITTED' } }))
-      ]);
-      
-      // Handle accounts data
-      let accountsData = [];
-      if (accountsResponse && accountsResponse.data) {
-        if (Array.isArray(accountsResponse.data)) {
-          accountsData = accountsResponse.data;
-        } else if (accountsResponse.data.data && Array.isArray(accountsResponse.data.data)) {
-          accountsData = accountsResponse.data.data;
-        } else if (accountsResponse.data.content && Array.isArray(accountsResponse.data.content)) {
-          accountsData = accountsResponse.data.content;
-        }
-      }
-      
-      // Handle loans data
-      let loansData = [];
-      if (loansResponse && loansResponse.data) {
-        if (Array.isArray(loansResponse.data)) {
-          loansData = loansResponse.data;
-        } else if (loansResponse.data.data && Array.isArray(loansResponse.data.data)) {
-          loansData = loansResponse.data.data;
-        } else if (loansResponse.data.content && Array.isArray(loansResponse.data.content)) {
-          loansData = loansResponse.data.content;
-        }
-      }
-      
-      // Get transactions for the primary account if available
-      let transactionsData = [];
-      if (accountsData.length > 0) {
-        const primaryAccount = accountsData[0];
-        try {
-          const transactionsResponse = await transactionAPI.getTransactionHistory(primaryAccount.accountNumber);
-          
-          if (transactionsResponse && transactionsResponse.data) {
-            if (Array.isArray(transactionsResponse.data)) {
-              transactionsData = transactionsResponse.data.slice(0, 5);
-            } else if (transactionsResponse.data.data && Array.isArray(transactionsResponse.data.data)) {
-              transactionsData = transactionsResponse.data.data.slice(0, 5);
-            } else if (transactionsResponse.data.content && Array.isArray(transactionsResponse.data.content)) {
-              transactionsData = transactionsResponse.data.content.slice(0, 5);
-            }
-          }
-        } catch (error) {
-          console.error('Failed to fetch transactions:', error);
-          notification.warning({
-            message: 'Transaction History',
-            description: 'Could not load recent transactions',
-          });
-        }
-      }
-      
-      setAccounts(accountsData);
-      setLoans(loansData);
-      setRecentTransactions(transactionsData);
-      setKycStatus(kycResponse.data);
-      
-    } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
-      notification.error({
-        message: 'Dashboard Error',
-        description: 'Failed to load dashboard data. Please try again.',
-      });
-    } finally {
-      setLoading(false);
-    }
   };
 
   const getTotalBalance = () => {
@@ -783,7 +764,6 @@ const CustomerDashboard = () => {
                               <Button 
                                 type="primary" 
                                 className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 border-none shadow-lg hover:shadow-cyan-500/25 flex items-center"
-                                onClick={() => console.log('View All Accounts clicked')}
                               >
                                 View All Accounts <ArrowRightOutlined className="ml-2" />
                               </Button>
@@ -848,7 +828,6 @@ const CustomerDashboard = () => {
                               <Button 
                                 type="primary" 
                                 className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 border-none shadow-lg hover:shadow-purple-500/25 flex items-center"
-                                onClick={() => console.log('View All Transactions clicked')}
                               >
                                 View All Transactions <ArrowRightOutlined className="ml-2" />
                               </Button>
@@ -909,7 +888,6 @@ const CustomerDashboard = () => {
                               <Button 
                                 type="primary" 
                                 className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 border-none shadow-lg hover:shadow-amber-500/25 flex items-center"
-                                onClick={() => console.log('View All Loans clicked')}
                               >
                                 View All <ArrowRightOutlined className="ml-2" />
                               </Button>
