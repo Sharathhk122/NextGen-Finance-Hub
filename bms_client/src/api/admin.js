@@ -3,7 +3,7 @@ import axios from 'axios';
 import { authHeader } from './auth-header';
 
 // Use environment variable with fallback for browser compatibility
-const API_URL = window._env_?.REACT_APP_API_URL || 'https://backend-hk.onrender.com/api';
+const API_URL = window._env_?.REACT_APP_API_URL || 'https://bmsp-back.onrender.com/api';
 
 const adminAPI = {
   // Dashboard
