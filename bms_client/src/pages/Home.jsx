@@ -593,19 +593,19 @@ const Home = () => {
                 </div>
               </div>
               <div className="social-links">
-                <a href="https://github.com" className="social-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://github.com/Sharathhk122" className="social-link" target="_blank" rel="noopener noreferrer">
                   <span className="social-icon">🐱</span>
                   <span className="social-text">GitHub</span>
                 </a>
-                <a href="https://linkedin.com" className="social-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.linkedin.com/in/sharath-h-k-174536308" className="social-link" target="_blank" rel="noopener noreferrer">
                   <span className="social-icon">👔</span>
                   <span className="social-text">LinkedIn</span>
                 </a>
-                <a href="https://instagram.com" className="social-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/sharath_hk__01/profilecard/?igsh=Mzc1Y3IxdGFmOXNh" className="social-link" target="_blank" rel="noopener noreferrer">
                   <span className="social-icon">📸</span>
                   <span className="social-text">Instagram</span>
                 </a>
-                <a href="https://twitter.com" className="social-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://sharathhk-portfolio.onrender.com" className="social-link" target="_blank" rel="noopener noreferrer">
                   <span className="social-icon">🐦</span>
                   <span className="social-text">Twitter</span>
                 </a>
