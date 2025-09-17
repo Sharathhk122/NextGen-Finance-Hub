@@ -140,7 +140,7 @@ const Footer = () => {
               <Space size="large">
                 <Tooltip title="GitHub" color="purple">
                   <a
-                    href="https://github.com"
+                    href="https://github.com/Sharathhk122"
                     className="social-link transform hover:scale-125 transition-transform duration-300"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -150,7 +150,7 @@ const Footer = () => {
                 </Tooltip>
                 <Tooltip title="LinkedIn" color="blue">
                   <a
-                    href="https://linkedin.com"
+                    href="https://www.linkedin.com/in/sharath-h-k-174536308"
                     className="social-link transform hover:scale-125 transition-transform duration-300"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -160,7 +160,7 @@ const Footer = () => {
                 </Tooltip>
                 <Tooltip title="Instagram" color="pink">
                   <a
-                    href="https://instagram.com"
+                    href="https://www.instagram.com/sharath_hk__01/profilecard/?igsh=Mzc1Y3IxdGFmOXNh"
                     className="social-link transform hover:scale-125 transition-transform duration-300"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -170,7 +170,7 @@ const Footer = () => {
                 </Tooltip>
                 <Tooltip title="Twitter" color="cyan">
                   <a
-                    href="https://twitter.com"
+                    href="https://sharathhk-portfolio.onrender.com"
                     className="social-link transform hover:scale-125 transition-transform duration-300"
                     target="_blank"
                     rel="noopener noreferrer"
