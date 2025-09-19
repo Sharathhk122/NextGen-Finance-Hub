@@ -1,5 +1,8 @@
 
 # 🌟 NextGen Finance Hub
+## 🚀 Live Demo
+
+👉 [Visit Live Website](https://nextgen-finance-hub.onrender.com/)  
 
 ![Made with React](https://img.shields.io/badge/Frontend-React-blue?logo=react)
 ![TailwindCSS](https://img.shields.io/badge/Styling-TailwindCSS-38bdf8?logo=tailwindcss)
@@ -83,9 +86,7 @@ Here are **20 UI previews** of **NextGen Finance Hub** in action:
 
 ---
 
-## 🚀 Live Demo
 
-👉 [Visit Live Website](https://nextgen-finance-hub.onrender.com/)  
 
 ### 🔑 Demo Credentials
 
