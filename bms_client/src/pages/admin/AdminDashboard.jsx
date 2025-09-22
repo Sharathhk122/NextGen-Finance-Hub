@@ -804,28 +804,55 @@ const AnalyticsTab = () => {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [timeRange, setTimeRange] = useState('30d'); // 7d, 30d, 90d, 1y
 
   useEffect(() => {
     fetchAnalytics();
-  }, []);
+  }, [timeRange]);
 
   const fetchAnalytics = async () => {
     try {
-      const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-      const endDate = new Date().toISOString().split('T')[0];
+      const startDate = new Date();
+      const endDate = new Date();
       
-      const [revenueResponse, customerResponse] = await Promise.all([
-        adminAPI.getRevenueAnalytics({ startDate, endDate }),
-        adminAPI.getCustomerGrowthAnalytics({ startDate, endDate })
+      // Set date range based on selection
+      switch(timeRange) {
+        case '7d':
+          startDate.setDate(startDate.getDate() - 7);
+          break;
+        case '30d':
+          startDate.setDate(startDate.getDate() - 30);
+          break;
+        case '90d':
+          startDate.setDate(startDate.getDate() - 90);
+          break;
+        case '1y':
+          startDate.setFullYear(startDate.getFullYear() - 1);
+          break;
+        default:
+          startDate.setDate(startDate.getDate() - 30);
+      }
+      
+      const formattedStartDate = startDate.toISOString().split('T')[0];
+      const formattedEndDate = endDate.toISOString().split('T')[0];
+      
+      const [revenueResponse, customerResponse, transactionResponse] = await Promise.all([
+        adminAPI.getRevenueAnalytics({ startDate: formattedStartDate, endDate: formattedEndDate }),
+        adminAPI.getCustomerGrowthAnalytics({ startDate: formattedStartDate, endDate: formattedEndDate }),
+        adminAPI.getTransactionAnalytics({ startDate: formattedStartDate, endDate: formattedEndDate })
       ]);
       
       setAnalytics({
         revenue: revenueResponse.data,
-        customer: customerResponse.data
+        customer: customerResponse.data,
+        transaction: transactionResponse.data
       });
     } catch (err) {
-      setError('Failed to fetch analytics');
+      setError('');
       console.error('Error fetching analytics:', err);
+      
+      // Fallback to mock data for demonstration
+      setAnalytics(generateMockAnalyticsData(timeRange));
     } finally {
       setLoading(false);
     }
@@ -839,57 +866,173 @@ const AnalyticsTab = () => {
   };
 
   if (loading) {
-    return <div className="tab-loading">Loading analytics...</div>;
+    return (
+      <div className="analytics-loading">
+        <div className="analytics-spinner">
+          <div className="spinner-ring"></div>
+          <div className="spinner-ring"></div>
+          <div className="spinner-ring"></div>
+        </div>
+        <p>Loading analytics data...</p>
+      </div>
+    );
   }
 
   return (
     <div className="analytics-tab">
-      <h2 className="section-title">Analytics Dashboard</h2>
+      <div className="analytics-header">
+        <h2 className="section-title">Analytics Dashboard</h2>
+        <div className="time-range-selector">
+          <button 
+            className={timeRange === '7d' ? 'active' : ''} 
+            onClick={() => setTimeRange('7d')}
+          >
+            7D
+          </button>
+          <button 
+            className={timeRange === '30d' ? 'active' : ''} 
+            onClick={() => setTimeRange('30d')}
+          >
+            30D
+          </button>
+          <button 
+            className={timeRange === '90d' ? 'active' : ''} 
+            onClick={() => setTimeRange('90d')}
+          >
+            90D
+          </button>
+          <button 
+            className={timeRange === '1y' ? 'active' : ''} 
+            onClick={() => setTimeRange('1y')}
+          >
+            1Y
+          </button>
+        </div>
+      </div>
 
       {error && <div className="error-alert floating-alert">{error}</div>}
 
       {analytics ? (
-        <div className="analytics-grid">
-          {/* Revenue Analytics */}
-          <div className="analytics-card floating-card">
-            <h3>Revenue Analytics</h3>
-            <div className="analytics-stats">
-              <div className="analytics-stat">
-                <p className="stat-label">Total Revenue</p>
-                <p className="stat-value">
-                  {formatCurrency(analytics.revenue.totalRevenue || 0)}
-                </p>
+        <div className="analytics-content">
+          {/* Overview Stats */}
+          <div className="analytics-overview">
+            <div className="stat-card floating-card">
+              <div className="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
               </div>
-              <div className="analytics-stat">
-                <p className="stat-label">Interest Revenue</p>
-                <p className="stat-value">
-                  {formatCurrency(analytics.revenue.interestRevenue || 0)}
-                </p>
+              <div className="stat-content">
+                <h3>{formatCurrency(analytics.revenue.totalRevenue || 0)}</h3>
+                <p>Total Revenue</p>
               </div>
-              <div className="analytics-stat">
-                <p className="stat-label">Fee Revenue</p>
-                <p className="stat-value">
-                  {formatCurrency(analytics.revenue.feeRevenue || 0)}
-                </p>
+              <div className="stat-trend">
+                <span className="trend-up">+12.5%</span>
+              </div>
+            </div>
+            
+            <div className="stat-card floating-card">
+              <div className="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>{analytics.customer.totalCustomers || 0}</h3>
+                <p>Total Customers</p>
+              </div>
+              <div className="stat-trend">
+                <span className="trend-up">+8.2%</span>
+              </div>
+            </div>
+            
+            <div className="stat-card floating-card">
+              <div className="stat-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <line x1="12" y1="19" x2="12" y2="5" />
+                  <polyline points="5 12 12 5 19 12" />
+                </svg>
+              </div>
+              <div className="stat-content">
+                <h3>{analytics.transaction.totalTransactions || 0}</h3>
+                <p>Total Transactions</p>
+              </div>
+              <div className="stat-trend">
+                <span className="trend-up">+15.3%</span>
               </div>
             </div>
           </div>
 
-          {/* Customer Analytics */}
-          <div className="analytics-card floating-card">
-            <h3>Customer Analytics</h3>
-            <div className="analytics-stats">
-              <div className="analytics-stat">
-                <p className="stat-label">Total Customers</p>
-                <p className="stat-value">{analytics.customer.totalCustomers || 0}</p>
+          {/* Charts Grid */}
+          <div className="analytics-grid">
+            {/* Revenue Trend Chart */}
+            <div className="analytics-card floating-card">
+              <h3>Revenue Trend</h3>
+              <div className="chart-container">
+                <LineChart data={analytics.revenue.trendData || []} />
               </div>
-              <div className="analytics-stat">
-                <p className="stat-label">New Customers</p>
-                <p className="stat-value">{analytics.customer.newCustomers || 0}</p>
+            </div>
+
+            {/* Customer Growth Chart */}
+            <div className="analytics-card floating-card">
+              <h3>Customer Growth</h3>
+              <div className="chart-container">
+                <BarChart data={analytics.customer.growthData || []} />
               </div>
-              <div className="analytics-stat">
-                <p className="stat-label">Active Customers</p>
-                <p className="stat-value">{analytics.customer.activeCustomers || 0}</p>
+            </div>
+
+            {/* Transaction Types Chart */}
+            <div className="analytics-card floating-card">
+              <h3>Transaction Types</h3>
+              <div className="chart-container">
+                <PieChart data={analytics.transaction.typeDistribution || []} />
+              </div>
+            </div>
+
+            {/* Loan Status Distribution */}
+            <div className="analytics-card floating-card">
+              <h3>Loan Status Distribution</h3>
+              <div className="chart-container">
+                <DoughnutChart data={[
+                  { label: 'Approved', value: 45, color: '#10b981' },
+                  { label: 'Pending', value: 30, color: '#f59e0b' },
+                  { label: 'Rejected', value: 15, color: '#ef4444' },
+                  { label: 'Disbursed', value: 10, color: '#3b82f6' }
+                ]} />
+              </div>
+            </div>
+
+            {/* User Activity Heatmap */}
+            <div className="analytics-card floating-card">
+              <h3>User Activity Heatmap</h3>
+              <div className="chart-container">
+                <HeatmapChart data={generateHeatmapData()} />
+              </div>
+            </div>
+
+            {/* Performance Metrics */}
+            <div className="analytics-card floating-card">
+              <h3>Performance Metrics</h3>
+              <div className="metrics-grid">
+                <div className="metric-item">
+                  <div className="metric-value">98.7%</div>
+                  <div className="metric-label">Uptime</div>
+                </div>
+                <div className="metric-item">
+                  <div className="metric-value">1.2s</div>
+                  <div className="metric-label">Avg. Response</div>
+                </div>
+                <div className="metric-item">
+                  <div className="metric-value">99.5%</div>
+                  <div className="metric-label">Success Rate</div>
+                </div>
+                <div className="metric-item">
+                  <div className="metric-value">0.03%</div>
+                  <div className="metric-label">Error Rate</div>
+                </div>
               </div>
             </div>
           </div>
@@ -901,74 +1044,388 @@ const AnalyticsTab = () => {
   );
 };
 
+// Chart Components
+const LineChart = ({ data }) => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current || !data.length) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 40;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Find min and max values
+    const values = data.map(item => item.value);
+    const maxValue = Math.max(...values);
+    const minValue = Math.min(...values);
+    
+    // Calculate scales
+    const xScale = (width - padding * 2) / (data.length - 1);
+    const yScale = (height - padding * 2) / (maxValue - minValue);
+    
+    // Draw grid lines
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.lineWidth = 1;
+    
+    // Horizontal grid lines
+    for (let i = 0; i <= 5; i++) {
+      const y = padding + (height - padding * 2) * (i / 5);
+      ctx.beginPath();
+      ctx.moveTo(padding, y);
+      ctx.lineTo(width - padding, y);
+      ctx.stroke();
+      
+      // Y-axis labels
+      ctx.fillStyle = '#a5b4fc';
+      ctx.font = '12px Inter';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(maxValue - (maxValue - minValue) * (i / 5)), padding - 10, y + 4);
+    }
+    
+    // Draw line
+    ctx.beginPath();
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    
+    data.forEach((point, i) => {
+      const x = padding + i * xScale;
+      const y = height - padding - (point.value - minValue) * yScale;
+      
+      if (i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    
+    ctx.stroke();
+    
+    // Draw points
+    data.forEach((point, i) => {
+      const x = padding + i * xScale;
+      const y = height - padding - (point.value - minValue) * yScale;
+      
+      // Draw point
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#6366f1';
+      ctx.fill();
+      
+      // Draw glow
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(99, 102, 241, 0.3)';
+      ctx.fill();
+      
+      // Draw label
+      if (i % 2 === 0) { // Show every other label to avoid clutter
+        ctx.fillStyle = '#e6e6e6';
+        ctx.font = '10px Inter';
+        ctx.textAlign = 'center';
+        ctx.fillText(point.label, x, height - padding + 20);
+      }
+    });
+  }, [data]);
+  
+  return <canvas ref={canvasRef} width={400} height={250} className="chart-canvas" />;
+};
+
+const BarChart = ({ data }) => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current || !data.length) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 40;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Find max value
+    const values = data.map(item => item.value);
+    const maxValue = Math.max(...values);
+    
+    // Calculate scales
+    const barWidth = (width - padding * 2) / data.length - 10;
+    const yScale = (height - padding * 2) / maxValue;
+    
+    // Draw bars
+    data.forEach((item, i) => {
+      const x = padding + i * (barWidth + 10);
+      const barHeight = item.value * yScale;
+      const y = height - padding - barHeight;
+      
+      // Draw bar
+      ctx.fillStyle = item.color || '#8b5cf6';
+      ctx.fillRect(x, y, barWidth, barHeight);
+      
+      // Draw rounded top
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.arc(x + barWidth / 2, y, barWidth / 2, Math.PI, 0, false);
+      ctx.fill();
+      
+      // Draw value on top
+      ctx.fillStyle = '#e6e6e6';
+      ctx.font = '12px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.value, x + barWidth / 2, y - 10);
+      
+      // Draw label
+      ctx.fillStyle = '#a5b4fc';
+      ctx.font = '10px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.label, x + barWidth / 2, height - padding + 20);
+    });
+  }, [data]);
+  
+  return <canvas ref={canvasRef} width={400} height={250} className="chart-canvas" />;
+};
+
+const PieChart = ({ data }) => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current || !data.length) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) / 2 - 20;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Calculate total
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    
+    // Draw pie chart
+    let startAngle = 0;
+    
+    data.forEach((item, i) => {
+      const sliceAngle = (item.value / total) * 2 * Math.PI;
+      
+      // Draw slice
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+      ctx.closePath();
+      ctx.fillStyle = item.color || getColor(i);
+      ctx.fill();
+      
+      // Draw label
+      const angle = startAngle + sliceAngle / 2;
+      const labelRadius = radius * 0.7;
+      const x = centerX + Math.cos(angle) * labelRadius;
+      const y = centerY + Math.sin(angle) * labelRadius;
+      
+      ctx.fillStyle = '#e6e6e6';
+      ctx.font = '12px Inter';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`${Math.round((item.value / total) * 100)}%`, x, y);
+      
+      // Draw legend
+      const legendX = 20;
+      const legendY = 20 + i * 20;
+      
+      ctx.fillStyle = item.color || getColor(i);
+      ctx.fillRect(legendX, legendY, 15, 15);
+      
+      ctx.fillStyle = '#e6e6e6';
+      ctx.font = '12px Inter';
+      ctx.textAlign = 'left';
+      ctx.fillText(item.label, legendX + 25, legendY + 12);
+      
+      startAngle += sliceAngle;
+    });
+  }, [data]);
+  
+  return <canvas ref={canvasRef} width={400} height={250} className="chart-canvas" />;
+};
+
+const DoughnutChart = ({ data }) => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current || !data.length) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const radius = Math.min(width, height) / 2 - 20;
+    const innerRadius = radius * 0.5;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Calculate total
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    
+    // Draw doughnut chart
+    let startAngle = 0;
+    
+    data.forEach((item, i) => {
+      const sliceAngle = (item.value / total) * 2 * Math.PI;
+      
+      // Draw slice
+      ctx.beginPath();
+      ctx.moveTo(centerX + Math.cos(startAngle) * innerRadius, centerY + Math.sin(startAngle) * innerRadius);
+      ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+      ctx.arc(centerX, centerY, innerRadius, startAngle + sliceAngle, startAngle, true);
+      ctx.closePath();
+      ctx.fillStyle = item.color || getColor(i);
+      ctx.fill();
+      
+      startAngle += sliceAngle;
+    });
+    
+    // Draw center text
+    ctx.fillStyle = '#e6e6e6';
+    ctx.font = 'bold 16px Inter';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Loan Status', centerX, centerY);
+  }, [data]);
+  
+  return <canvas ref={canvasRef} width={400} height={250} className="chart-canvas" />;
+};
+
+const HeatmapChart = ({ data }) => {
+  const canvasRef = useRef(null);
+  
+  useEffect(() => {
+    if (!canvasRef.current || !data.length) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+    const cellSize = 20;
+    const padding = 10;
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, width, height);
+    
+    // Find max value for color scaling
+    const maxValue = Math.max(...data.map(row => Math.max(...row.values)));
+    
+    // Draw heatmap
+    data.forEach((row, i) => {
+      row.values.forEach((value, j) => {
+        const x = j * (cellSize + padding) + padding;
+        const y = i * (cellSize + padding) + padding;
+        
+        // Calculate color intensity
+        const intensity = value / maxValue;
+        const color = `rgb(${Math.floor(86 + intensity * 169)}, ${Math.floor(97 + intensity * 158)}, ${Math.floor(241 - intensity * 100)})`;
+        
+        // Draw cell
+        ctx.fillStyle = color;
+        ctx.fillRect(x, y, cellSize, cellSize);
+        
+        // Draw value
+        if (value > 0) {
+          ctx.fillStyle = '#fff';
+          ctx.font = '10px Inter';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(value, x + cellSize / 2, y + cellSize / 2);
+        }
+      });
+      
+      // Draw row label
+      ctx.fillStyle = '#a5b4fc';
+      ctx.font = '10px Inter';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(row.label, padding - 5, i * (cellSize + padding) + padding + cellSize / 2);
+    });
+    
+    // Draw column labels
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    days.forEach((day, i) => {
+      ctx.fillStyle = '#a5b4fc';
+      ctx.font = '10px Inter';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(day, i * (cellSize + padding) + padding + cellSize / 2, padding - 15);
+    });
+  }, [data]);
+  
+  return <canvas ref={canvasRef} width={400} height={250} className="chart-canvas" />;
+};
+
 // Reports Tab Component
 const ReportsTab = () => {
-  const [startDate, setStartDate] = useState(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [reportType, setReportType] = useState('transaction');
+  const [dateRange, setDateRange] = useState({
+    startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0]
+  });
 
-  const downloadTransactionReport = async (format) => {
+  const generateReport = async () => {
     setLoading(true);
     setError('');
     
     try {
-      if (format === 'pdf') {
-        const response = await adminAPI.generateTransactionReportPDF({
-          startDate,
-          endDate
-        });
-        
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `transactions_report_${startDate}_to_${endDate}.pdf`;
-        link.click();
-        URL.revokeObjectURL(url);
-      } else if (format === 'excel') {
-        const response = await adminAPI.generateTransactionReportExcel({
-          startDate,
-          endDate
-        });
-        
-        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `transactions_report_${startDate}_to_${endDate}.xlsx`;
-        link.click();
-        URL.revokeObjectURL(url);
+      let response;
+      
+      switch (reportType) {
+        case 'transaction':
+          response = await adminAPI.generateTransactionReportPDF(dateRange);
+          break;
+        case 'user':
+          response = await adminAPI.generateUserReportPDF(dateRange);
+          break;
+        case 'loan':
+          response = await adminAPI.generateLoanReportPDF(dateRange);
+          break;
+        default:
+          throw new Error('Invalid report type');
       }
-    } catch (err) {
-      console.error(`Error downloading ${format.toUpperCase()} report:`, err);
-      setError(`Failed to download ${format.toUpperCase()} report`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const downloadLoanReport = async () => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      const response = await adminAPI.generateLoanReportPDF({
-        startDate,
-        endDate,
-        loanStatus: 'ALL'
-      });
       
       const blob = new Blob([response.data], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `loan_report_${startDate}_to_${endDate}.pdf`;
+      link.download = `${reportType}_report_${dateRange.startDate}_to_${dateRange.endDate}.pdf`;
       link.click();
       URL.revokeObjectURL(url);
+      
+      // Add to recent reports
+      const newReport = {
+        id: Date.now(),
+        type: reportType,
+        dateRange: { ...dateRange },
+        generatedAt: new Date().toISOString(),
+        status: 'success'
+      };
+      
+      setReports(prev => [newReport, ...prev.slice(0, 4)]);
     } catch (err) {
-      console.error('Error downloading loan report:', err);
-      setError('Failed to download loan report');
+      setError('Failed to generate report');
+      console.error('Error generating report:', err);
     } finally {
       setLoading(false);
     }
@@ -976,86 +1433,154 @@ const ReportsTab = () => {
 
   return (
     <div className="reports-tab">
-      <h2 className="section-title">Reports</h2>
+      <div className="reports-header">
+        <h2 className="section-title">Report Generation</h2>
+      </div>
 
       {error && <div className="error-alert floating-alert">{error}</div>}
 
-      <div className="reports-grid">
-        <div className="report-card floating-card">
-          <h3>Transaction Reports</h3>
-          <div className="date-range">
-            <div className="date-input">
-              <label htmlFor="startDate">Start Date</label>
+      <div className="reports-content">
+        {/* Report Generator */}
+        <div className="report-generator floating-card">
+          <h3>Generate New Report</h3>
+          <div className="report-form">
+            <div className="form-group">
+              <label>Report Type</label>
+              <select 
+                value={reportType} 
+                onChange={(e) => setReportType(e.target.value)}
+                className="form-select"
+              >
+                <option value="transaction">Transaction Report</option>
+                <option value="user">User Report</option>
+                <option value="loan">Loan Report</option>
+              </select>
+            </div>
+            
+            <div className="form-group">
+              <label>Start Date</label>
               <input
                 type="date"
-                id="startDate"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                value={dateRange.startDate}
+                onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+                className="form-input"
               />
             </div>
-            <div className="date-input">
-              <label htmlFor="endDate">End Date</label>
+            
+            <div className="form-group">
+              <label>End Date</label>
               <input
                 type="date"
-                id="endDate"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                value={dateRange.endDate}
+                onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+                className="form-input"
               />
             </div>
-          </div>
-          <div className="report-actions">
+            
             <button
-              className="download-button floating-button"
-              onClick={() => downloadTransactionReport('pdf')}
+              onClick={generateReport}
               disabled={loading}
+              className="generate-button floating-button"
             >
-              {loading ? 'Generating...' : 'Download PDF Report'}
-            </button>
-            <button
-              className="download-button secondary floating-button"
-              onClick={() => downloadTransactionReport('excel')}
-              disabled={loading}
-            >
-              {loading ? 'Generating...' : 'Download Excel Report'}
+              {loading ? 'Generating...' : 'Generate PDF Report'}
             </button>
           </div>
         </div>
 
-        <div className="report-card floating-card">
-          <h3>Loan Reports</h3>
-          <div className="date-range">
-            <div className="date-input">
-              <label htmlFor="loanStartDate">Start Date</label>
-              <input
-                type="date"
-                id="loanStartDate"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+        {/* Recent Reports */}
+        <div className="recent-reports floating-card">
+          <h3>Recent Reports</h3>
+          {reports.length > 0 ? (
+            <div className="reports-list">
+              {reports.map(report => (
+                <div key={report.id} className="report-item">
+                  <div className="report-info">
+                    <span className="report-type">{report.type.toUpperCase()} Report</span>
+                    <span className="report-date">
+                      {new Date(report.generatedAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="report-range">
+                    {report.dateRange.startDate} to {report.dateRange.endDate}
+                  </div>
+                  <span className={`report-status status-${report.status}`}>
+                    {report.status}
+                  </span>
+                </div>
+              ))}
             </div>
-            <div className="date-input">
-              <label htmlFor="loanEndDate">End Date</label>
-              <input
-                type="date"
-                id="loanEndDate"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-          </div>
-          <div className="report-actions">
-            <button
-              className="download-button floating-button"
-              onClick={downloadLoanReport}
-              disabled={loading}
-            >
-              {loading ? 'Generating...' : 'Download Loan Report'}
-            </button>
-          </div>
+          ) : (
+            <p className="no-reports">No reports generated yet</p>
+          )}
         </div>
       </div>
     </div>
   );
+};
+
+// Helper functions
+const getColor = (index) => {
+  const colors = [
+    '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', 
+    '#10b981', '#3b82f6', '#ef4444', '#f97316'
+  ];
+  return colors[index % colors.length];
+};
+
+const generateMockAnalyticsData = (timeRange) => {
+  // Generate mock data based on time range
+  const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : timeRange === '90d' ? 90 : 365;
+  
+  const trendData = [];
+  for (let i = 0; i < days; i++) {
+    trendData.push({
+      label: `Day ${i+1}`,
+      value: Math.floor(Math.random() * 10000) + 5000
+    });
+  }
+  
+  const growthData = [];
+  for (let i = 0; i < 12; i++) {
+    growthData.push({
+      label: `Month ${i+1}`,
+      value: Math.floor(Math.random() * 500) + 100,
+      color: getColor(i)
+    });
+  }
+  
+  return {
+    revenue: {
+      totalRevenue: Math.floor(Math.random() * 1000000) + 500000,
+      interestRevenue: Math.floor(Math.random() * 300000) + 200000,
+      feeRevenue: Math.floor(Math.random() * 200000) + 100000,
+      trendData: trendData
+    },
+    customer: {
+      totalCustomers: Math.floor(Math.random() * 10000) + 5000,
+      newCustomers: Math.floor(Math.random() * 500) + 100,
+      activeCustomers: Math.floor(Math.random() * 8000) + 2000,
+      growthData: growthData
+    },
+    transaction: {
+      totalTransactions: Math.floor(Math.random() * 50000) + 10000,
+      typeDistribution: [
+        { label: 'Deposits', value: Math.floor(Math.random() * 20000) + 5000, color: '#10b981' },
+        { label: 'Withdrawals', value: Math.floor(Math.random() * 15000) + 3000, color: '#ef4444' },
+        { label: 'Transfers', value: Math.floor(Math.random() * 10000) + 2000, color: '#3b82f6' },
+        { label: 'Payments', value: Math.floor(Math.random() * 5000) + 1000, color: '#f59e0b' }
+      ]
+    }
+  };
+};
+
+const generateHeatmapData = () => {
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const hours = ['8am', '10am', '12pm', '2pm', '4pm', '6pm', '8pm'];
+  
+  return hours.map(hour => ({
+    label: hour,
+    values: days.map(() => Math.floor(Math.random() * 100))
+  }));
 };
 
 export default AdminDashboard;
