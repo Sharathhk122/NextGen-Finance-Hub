@@ -14,6 +14,8 @@ const LoginForm = () => {
   const [typingText, setTypingText] = useState('');
   const [typingIndex, setTypingIndex] = useState(0);
   const [typingComplete, setTypingComplete] = useState(false);
+  const [showTestCredentials, setShowTestCredentials] = useState(false);
+  const [autoFilled, setAutoFilled] = useState(null);
 
   const { login, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -21,38 +23,40 @@ const LoginForm = () => {
   const containerRef = useRef(null);
 
   const phrases = [
-    "Secure authentication powered by Nexus",
-    "Enterprise-grade security protocols",
-    "Your data is encrypted end-to-end",
-    "Multi-factor authentication ready"
+    "Use test credentials for quick access",
+    "Customer: sharathhk01@gmail.com / Sharathhk@123",
+    "Admin: sharathhk188@gmail.com / Sharathhk@123",
+    "Enterprise-grade security protocols"
+  ];
+
+  const testCredentials = [
+    {
+      type: 'customer',
+      email: 'sharathhk01@gmail.com',
+      password: 'Sharathhk@123'
+    },
+    {
+      type: 'Admin',
+      email: 'sharathhk188@gmail.com',
+      password: 'Sharathhk@123'
+    }
   ];
 
   useEffect(() => {
     document.body.classList.add('dark-theme');
     
-    // Mouse move 3D effect
+    // Mouse move 3D effect (removed hover effect on form box)
     const handleMouseMove = (e) => {
-      if (cardRef.current) {
-        const card = cardRef.current;
+      // Parallax effect for background shapes only
+      const shapes = document.querySelectorAll('.shape');
+      const card = cardRef.current;
+      if (card && shapes.length > 0) {
         const rect = card.getBoundingClientRect();
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
         
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        
-        const rotateY = (x - centerX) / 25;
-        const rotateX = (centerY - y) / 25;
-        
-        card.style.transform = `
-          perspective(1000px) 
-          rotateX(${rotateX}deg) 
-          rotateY(${rotateY}deg)
-          translateZ(10px)
-        `;
-        
-        // Parallax effect for shapes
-        const shapes = document.querySelectorAll('.shape');
         shapes.forEach(shape => {
           const depth = parseFloat(shape.getAttribute('data-depth'));
           const xMove = (x - centerX) * depth;
@@ -62,11 +66,12 @@ const LoginForm = () => {
       }
     };
 
-    // Mouse leave effect
+    // No card rotation on mouse leave
     const handleMouseLeave = () => {
-      if (cardRef.current) {
-        cardRef.current.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-      }
+      const shapes = document.querySelectorAll('.shape');
+      shapes.forEach(shape => {
+        shape.style.transform = 'translate(0, 0)';
+      });
     };
 
     if (containerRef.current) {
@@ -154,6 +159,55 @@ const LoginForm = () => {
     }
   };
 
+  const fillTestCredentials = (cred) => {
+    setFormData({
+      email: cred.email,
+      password: cred.password
+    });
+    setAutoFilled(cred.type);
+  };
+
+  const TestCredentialsModal = () => (
+    <div className="test-credentials-modal">
+      <div className="modal-content">
+        <h3>Test Credentials</h3>
+        <div className="credentials-list">
+          {testCredentials.map((cred, index) => (
+            <div key={index} className="credential-item">
+              <div className="credential-header">
+                <span className={`credential-badge ${cred.type}`}>
+                  {cred.type === 'customer' ? '👤 Customer' : '🏪 Admin'}
+                </span>
+              </div>
+              <div className="credential-details">
+                <div className="credential-field">
+                  <span className="field-label">Email:</span>
+                  <span className="field-value">{cred.email}</span>
+                </div>
+                <div className="credential-field">
+                  <span className="field-label">Password:</span>
+                  <span className="field-value">{cred.password}</span>
+                </div>
+                <button 
+                  className="fill-button"
+                  onClick={() => fillTestCredentials(cred)}
+                >
+                  Fill Credentials
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button 
+          className="close-button"
+          onClick={() => setShowTestCredentials(false)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="login-container" ref={containerRef}>
       <div className="animated-bg">
@@ -196,6 +250,36 @@ const LoginForm = () => {
           
           <h2>Welcome Back</h2>
           
+          <div className="test-credentials-notice">
+            <p>Use test accounts for quick access:</p>
+            <div className="credential-pills">
+              <span 
+                className="credential-pill customer"
+                onClick={() => fillTestCredentials(testCredentials[0])}
+              >
+                👤 Customer
+              </span>
+              <span 
+                className="credential-pill seller"
+                onClick={() => fillTestCredentials(testCredentials[1])}
+              >
+                🏪 Admin
+              </span>
+            </div>
+            <button 
+              className="view-all-button"
+              onClick={() => setShowTestCredentials(true)}
+            >
+              View All Credentials
+            </button>
+          </div>
+
+          {autoFilled && (
+            <div className="auto-filled-notice">
+              ✅ Auto-filled {autoFilled} credentials
+            </div>
+          )}
+
           {error && (
             <div className="error-message">
               {error}
@@ -204,7 +288,11 @@ const LoginForm = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="email">
+                Email 
+                {formData.email === 'sharathhk01@gmail.com' && <span className="filled-badge">Customer</span>}
+                {formData.email === 'sharathhk188@gmail.com' && <span className="filled-badge Admin">Admin</span>}
+              </label>
               <input
                 type="email"
                 id="email"
@@ -261,6 +349,8 @@ const LoginForm = () => {
           </div>
         </div>
       </div>
+
+      {showTestCredentials && <TestCredentialsModal />}
     </div>
   );
 };
