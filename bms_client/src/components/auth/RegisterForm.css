@@ -388,7 +388,7 @@
 
 .register-card {
   width: 100%;
-  max-width: 900px;
+  max-width: 950px;
   margin: 20px;
   background: rgba(23, 21, 47, 0.8) !important;
   backdrop-filter: blur(15px);
@@ -492,6 +492,178 @@
   100% {
     background-position: 200% 0%;
   }
+}
+
+/* Test Credentials Banner */
+.test-credentials-banner {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(188, 19, 254, 0.1));
+  border: 1px solid rgba(108, 92, 231, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(108, 92, 231, 0.15);
+}
+
+.test-credentials-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6c5ce7, #a29bfe, #6c5ce7);
+  animation: bannerGlow 3s infinite linear;
+}
+
+@keyframes bannerGlow {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: 200px 0;
+  }
+}
+
+.banner-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.banner-icon {
+  font-size: 20px;
+  color: #6c5ce7;
+}
+
+.banner-title {
+  font-size: 18px;
+  color: white !important;
+  font-weight: 600;
+}
+
+.demo-tag {
+  margin-left: auto;
+  font-weight: 600;
+  padding: 2px 12px;
+  border-radius: 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.credentials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.credential-item {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.credential-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(108, 92, 231, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(108, 92, 231, 0.2);
+}
+
+.credential-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.credential-row:last-child {
+  margin-bottom: 0;
+}
+
+.credential-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.credential-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.credential-code {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-family: 'Courier New', monospace;
+  color: #ffd166;
+  flex: 1;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.copy-btn {
+  color: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  color: #6c5ce7 !important;
+  transform: scale(1.1);
+}
+
+.autofill-btn {
+  color: #4ecdc4 !important;
+  font-weight: 500;
+}
+
+.autofill-btn:hover {
+  color: #06d6a0 !important;
+}
+
+.banner-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.banner-hint {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.login-btn {
+  background: linear-gradient(45deg, #6c5ce7, #a29bfe) !important;
+  border: none !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4) !important;
 }
 
 .card-header {
@@ -722,6 +894,35 @@
   .register-card {
     margin: 10px;
     border-radius: 16px !important;
+    max-width: 95%;
+  }
+  
+  .test-credentials-banner {
+    padding: 16px;
+  }
+  
+  .banner-header {
+    flex-wrap: wrap;
+  }
+  
+  .credential-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .credential-value {
+    width: 100%;
+  }
+  
+  .credential-code {
+    width: 100%;
+  }
+  
+  .banner-footer {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
   }
   
   .card-header h2 {
