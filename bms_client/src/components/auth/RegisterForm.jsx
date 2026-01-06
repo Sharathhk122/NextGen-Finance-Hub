@@ -15,7 +15,10 @@ import {
   Row,
   Col,
   Typography,
-  Divider
+  Divider,
+  Tag,
+  Space,
+  Tooltip
 } from 'antd';
 import { 
   UserOutlined, 
@@ -25,7 +28,10 @@ import {
   EnvironmentOutlined,
   BankOutlined,
   IdcardOutlined,
-  TeamOutlined
+  TeamOutlined,
+  InfoCircleOutlined,
+  CopyOutlined,
+  CheckOutlined
 } from '@ant-design/icons';
 import './RegisterForm.css';
 
@@ -44,9 +50,42 @@ const RegisterForm = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [isHovered, setIsHovered] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
 
   const { registerCustomer, registerAdmin } = useAuth();
   const navigate = useNavigate();
+
+  // Pre-filled test credentials
+  const testCredentials = [
+    { email: 'sharathhk01@gmail.com', password: 'Sharathhk@123' },
+    { email: 'sharathhk188@gmail.com', password: 'Sharathhk@123' }
+  ];
+
+  // Function to copy to clipboard
+  const copyToClipboard = async (text, type) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      if (type === 'email') {
+        setCopiedEmail(true);
+        setTimeout(() => setCopiedEmail(false), 2000);
+      } else {
+        setCopiedPassword(true);
+        setTimeout(() => setCopiedPassword(false), 2000);
+      }
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  // Auto-fill form with test credentials
+  const autoFillForm = (index) => {
+    const credentials = testCredentials[index];
+    form.setFieldsValue({
+      email: credentials.email,
+      password: credentials.password
+    });
+  };
 
   // Fetch countries on component mount
   useEffect(() => {
@@ -161,6 +200,10 @@ const RegisterForm = () => {
     }
   };
 
+  const goToLogin = () => {
+    navigate('/login');
+  };
+
   return (
     <div className="register-container">
       <div className="animated-background">
@@ -206,6 +249,77 @@ const RegisterForm = () => {
             <div key={i} className="card-sparkle"></div>
           ))}
         </div>
+        
+        {/* Test Credentials Banner */}
+        <div className="test-credentials-banner">
+          <div className="banner-header">
+            <InfoCircleOutlined className="banner-icon" />
+            <Text strong className="banner-title"> SMTP Service Issue OTP emails won't work on Render
+Use existing test accounts instead of signing up. Click 'go to login' for login details.</Text>
+            <Tag color="gold" className="demo-tag">login details</Tag>
+          </div>
+          <div className="credentials-list">
+            {testCredentials.map((cred, index) => (
+              <div key={index} className="credential-item">
+                <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                  <div className="credential-row">
+                    <Text className="credential-label">Email:</Text>
+                    <div className="credential-value">
+                      <code className="credential-code">{cred.email}</code>
+                      <Tooltip title={copiedEmail ? "Copied!" : "Copy email"}>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={copiedEmail ? <CheckOutlined /> : <CopyOutlined />}
+                          onClick={() => copyToClipboard(cred.email, 'email')}
+                          className="copy-btn"
+                        />
+                      </Tooltip>
+                      <Button 
+                        type="link" 
+                        size="small" 
+                        onClick={() => autoFillForm(index)}
+                        className="autofill-btn"
+                      >
+                        Auto-fill
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="credential-row">
+                    <Text className="credential-label">Password:</Text>
+                    <div className="credential-value">
+                      <code className="credential-code">{cred.password}</code>
+                      <Tooltip title={copiedPassword ? "Copied!" : "Copy password"}>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={copiedPassword ? <CheckOutlined /> : <CopyOutlined />}
+                          onClick={() => copyToClipboard(cred.password, 'password')}
+                          className="copy-btn"
+                        />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </Space>
+              </div>
+            ))}
+          </div>
+          <div className="banner-footer">
+            <Text type="secondary" className="banner-hint">
+               SMTP Service IssueOTP emails won't work on Render
+Use existing test accounts instead of signing up. go to login' for login details.
+            </Text>
+            <Button 
+              type="primary" 
+              size="small" 
+              onClick={goToLogin}
+              className="login-btn"
+            >
+              Go to Login
+            </Button>
+          </div>
+        </div>
+
         <div className="card-header">
           <Title level={2} className="animated-title">
             <span className="letter">R</span>
@@ -630,13 +744,11 @@ const RegisterForm = () => {
                   <Form.Item
                     name="branchName"
                     label="Branch Name"
-                  >
+                  />
                     <Input 
                       placeholder="Branch Name" 
                       size="large"
-                      className="three-d-input"
-                    />
-                  </Form.Item>
+                  />
                 </Col>
               </Row>
 
